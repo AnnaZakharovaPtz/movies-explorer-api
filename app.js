@@ -17,7 +17,7 @@ app.use(limiter);
 app.use(express.json());
 app.use(requestLogger);
 
-app.use('/', mainRouter);
+app.use('/api/', mainRouter);
 
 app.use(errorLogger);
 app.use(errors());
