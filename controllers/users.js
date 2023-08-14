@@ -72,10 +72,10 @@ const createUser = (req, res, next) => {
 };
 
 const updateUserProfile = (req, res, next) => {
-  const { name } = req.body;
+  const { name, email } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
-    { name },
+    { name, email },
     { new: true },
   )
     .then((user) => {
@@ -85,7 +85,17 @@ const updateUserProfile = (req, res, next) => {
         throw new NotFoundError(NOT_FOUND_USER_MSG);
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'MongoServerError' && err.code === 11000) {
+        next(new ConflictError(CONFLICT_ERROR_MSG));
+        return;
+      }
+      if (err instanceof mongoose.Error.ValidationError) {
+        next(new BadRequestError(err.message));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports = {

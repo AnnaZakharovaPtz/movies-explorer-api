@@ -8,7 +8,7 @@ const { FORBIDDEN_ERROR_MSG, NOT_FOUND_MOVIE_MSG } = require('../errors/error-me
 const DOCUMENT_CREATED = 201;
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => {
       res.send(movies);
     })
